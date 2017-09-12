@@ -10,3 +10,8 @@
 		* PUT 用来更新资源，
 		* DELETE 用来删除资源。
 	
+
+### Figures
+1. google:
+	* a rack -> 80 servers. 
+	* a cluster -> 30 racks.
