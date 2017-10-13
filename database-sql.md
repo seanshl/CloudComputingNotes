@@ -14,5 +14,7 @@
 
 	3. 两个主库都负责读操作和写操作，写入操作时互相协调。如果其中一个主库挂机，系统可以继续读取和写入。
 
-
+3. **Miscs**
+	1. Clustered Index 
+		table中数据的physical storage order 与 key的 logic order相同。也就是数据依据聚集索引，可以依次排列在存储硬件上. 一个表中只能有一个clustered index, 一般是做主键，提高查询效率。		
 
