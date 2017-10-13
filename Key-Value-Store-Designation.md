@@ -29,8 +29,15 @@
 			* 400 requests per second = 1B requests per month
 			
 3. __应用__
-	* High Level Design
-		![顶层设计](https://camo.githubusercontent.com/57223dafbceaf008d0fcec518ff40932f504b985/687474703a2f2f692e696d6775722e636f6d2f4b715a336453782e706e67)
+	* High Level Design: 这一步仅仅是给出一个模块级的流程
+		* ![顶层设计](https://camo.githubusercontent.com/57223dafbceaf008d0fcec518ff40932f504b985/687474703a2f2f692e696d6775722e636f6d2f4b715a336453782e706e67)
+		* 解释
+			* 客户端发送请求到web server, 之后进入query API, 如果hit纠从memory cache中提取结果，否则通过倒转索引和文档服务来取得结果
+	* 使用Memory Cache, 例如Memcached或者Redis来减小read latency 并且避免过多地使用reverse index service和document service
+	* 内存的1MB连续读取，大概是250ms, SSD是它的4倍，硬盘是80倍.
+	* 流程
+			* 
+		
 	
 	 
 	
