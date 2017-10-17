@@ -30,8 +30,12 @@
 			4. 一次磁盘I/O约等于9ms. 
 		* 硬件延迟图
 			* ![硬件延迟图](http://upload-images.jianshu.io/upload_images/1234352-3f90328d01123407.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-		* 
-
+		* 磁盘预读
+			* 考虑到磁盘IO是非常高昂的操作，计算机操作系统做了一些优化，当一次IO时，不光把当前磁盘地址的数据，而是把相邻的数据也都读取到内存缓冲区内，因为局部预读性原理告诉我们，当计算机访问一个地址的数据的时候，与其相邻的数据也会很快被访问到。每一次IO读取的数据我们称之为一页(page)。具体一页有多大数据跟操作系统有关，一般为4k或8k，也就是我们读取一页内的数据时候，实际上才发生了一次IO，这个理论对于索引的数据结构设计非常有帮助。
+	* 需求： 控制磁盘I/O次数
+	* B+树
+		1. 结构
+			* ![B+树结构](http://upload-images.jianshu.io/upload_images/1234352-5167c6e5d8b28538.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 4. **Miscs**
 	1. Clustered Index 
 		table中数据的physical storage order 与 key的 logic order相同。也就是数据依据聚集索引，可以依次排列在存储硬件上. 一个表中只能有一个clustered index, 一般是做主键，提高查询效率。		
