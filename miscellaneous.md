@@ -48,3 +48,6 @@
 1. google:
 	* a rack -> 80 servers. 
 	* a cluster -> 30 racks.
+	
+### Cap Theorem
+1. (CAP Theorem: Revisited)[http://robertgreiner.com/2014/08/cap-theorem-revisited/]
