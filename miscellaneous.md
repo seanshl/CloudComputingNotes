@@ -50,7 +50,7 @@
 	* a cluster -> 30 racks.
 	
 ### Cap Theorem
-1. (CAP Theorem: Revisited)[http://robertgreiner.com/2014/08/cap-theorem-revisited/]
+1. [CAP Theorem: Revisited](http://robertgreiner.com/2014/08/cap-theorem-revisited/)
 
 ### HTTP, TCP, UDP
 1. **TCP**
