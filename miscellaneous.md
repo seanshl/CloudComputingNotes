@@ -1,3 +1,7 @@
+### References
+* [DNS分别在什么情况下使用TCP/UDP](http://www.cnblogs.com/549294286/p/5172435.html)
+
+
 ### Rest
 1. **理解**
 	1. **REST**：(Resource Representational State Transfer). 资源表现层状态转移
@@ -52,7 +56,7 @@
 ### Cap Theorem
 1. [CAP Theorem: Revisited](http://robertgreiner.com/2014/08/cap-theorem-revisited/)
 
-### HTTP, TCP, UDP
+### HTTP, TCP, UDP, DNS
 1. **TCP**
 	* TCP是面向连接的一种传输控制协议。TCP连接之后，客户端和服务器可以互相发送和接收消息，在客户端或者服务器没有主动断开之前，连接一直存在，故称为长连接。
 	* 连接有耗时，传输数据无大小限制，准确可靠，先发先至。
@@ -65,5 +69,13 @@
 	* HTTP/1.0请求结束后断开连接，完成一次请求/响应操作。故称为短连接。
 	* HTTP/1.1中的keep-alive所保持的长连接则是为了优化每次HTTP请求中TCP连接三次握手的麻烦和资源开销，只建立一次TCP连接，多次的在这个通道上完成请求/响应操作。
 	* 值得一提的是，服务器无法主动给客户端推送消息。
+4. **DNS**
+	* DNS使用TCP和UDP两种协议
+	* DNS规定了两种服务器
+		1. 主DNS服务器: 在一个区中主DNS服务器从自己本机的数据文件中读取该区的DNS数据信息
+		2. 辅助DNS服务器： 从区的主DNS服务器中读取该区的数据信息
+	* Zone Transfer: 当辅助DNS服务器启动时需要与主DNS服务器通信，并加载数据信息
+	* Zone Transfer使用TCP： 辅助DNS一般定时(3小时)问询主服务器查看是否有数据变动，如果有则会进行一次zone transfer。这个通信的数据量会很大,也需要可靠连接
+	* Domain Name Analysis使用UDP： 查询域名返回的内容比较小，udp传输足够，不需要经过三次握手，响应快.
 
 
