@@ -1,5 +1,6 @@
 ### Articles
 * [Cap Theorem Revisited](http://robertgreiner.com/2014/08/cap-theorem-revisited/)
+* [Proof of CAP](http://mwhittaker.github.io/2014/08/16/illustrated-proof-cap-theorem/)
 ### Cap Theorem
 1. 基本定义
 	* 在一个分布式系统中: **Consistency, Availability和Partition Tolerance**三者中只能满足二者.
