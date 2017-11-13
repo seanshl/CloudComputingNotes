@@ -1,3 +1,9 @@
+### References
+* [SSL/TLS协议运行机制概述](http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html)
+* [数字签名是什么](http://www.ruanyifeng.com/blog/2011/08/what_is_a_digital_signature.html)
+* [SSH原理与运用](http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html)
+
+
 ### Understand SSH
 
 1. __什么是SSH__
