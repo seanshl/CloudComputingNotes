@@ -92,9 +92,18 @@
 ### Misc
 1. 如何区分是不是distributed database?
 	* 不以防止单点失败为目的的多数据库
-	
+
+### 存储结构
+1. SSTable: Sorted Strings Table
+
 ### Read
 * ![](http://img.blog.csdn.net/20150830142808484)
+* 流程
+	1. 检查boomfilter
+		* 每个table有多个sstable, 每个sstable自带一个boomfilter,使用boomfilter来检查partition key是否在这个sstable中
+		* 这一步在磁盘IO前结束
+	2. 若存在pk, 则检查parition key cache
+		
 
 ### Write
 * Cassandra拥有非常高的写性能
@@ -107,6 +116,8 @@
 		* 写入到Memtable时，Cassandra能够动态地为它分配内存空间，你也可以使用工具自己调整。
 	2. memtable满了之后会将数据刷入数据文件SSTable，并清空commit log. 
 		* 当达到阀值后，Memtable中的数据和索引会被放到一个队列中，然后flush到磁盘，可以使用memtableflushqueue_size参数来指定队列的长度。当进行flush时，会停止写请求。
+		* 顺序磁盘IO操作，降低大量写操作对存储系统的压力
+		* 一个commit log对应多个sstable. 
 	3. 根据consistency level, 刷入SSTable后回应协调者. 
 	4. 每个table包含多个SSTable和Memtable
 		* 为什么要分成多个？减小表的大小来提高sequential scan的效率
