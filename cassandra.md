@@ -4,6 +4,7 @@
 ### References
 * [Cassandra架构理解](http://zqhxuyuan.github.io/2015/08/25/2015-08-25-Cassandra-Architecture/)
 * [一致性哈希算法详解](http://blog.csdn.net/cywosp/article/details/23397179/)
+* [Cassandra原理介绍](http://blog.csdn.net/doc_sgl/article/details/51068131)
 ### Distributed Hashtable (DHT)
 
 ### 架构与通信
@@ -65,14 +66,49 @@
 	* 可以指定在每个数据中心分别存储多少分replica
 
 ### 客户端连接
-
+1. 协调者(Coordinator)
+	* client连接至节点并发出read/write请求时，该节点充当client端应用与包含请求数据的节点(或replica)之间的协调者，它利用配置的partitioner和replicaplacement策略确定那个节点当获取请求。
+2. 写请求
+	* 协调者(coordinator)将write请求发送到拥有对应row的所有replica节点，只要节点可用便获取并执行写请求。
+	* 写一致性级别(write consistency level)确定要有多少个replica节点必须返回成功的确认信息。成功意味着数据被正确写入了commit log和memtable。
+	* ![](http://img.blog.csdn.net/20150830123130980)
+	* 上例为单数据中心，12个节点，复制因子为3，写一致性等级为ONE的写情况(红色的箭头表示只要一个节点成功写入,便可立即返回给客户端)
+3. 读请求
+	1. 读请求区分为
+		* Direct Read
+		* Repair Read
+	2. 过程:
+		1. 根据一致性级别与被确定的所有replica联系，被联系的节点返回请求的数据
+		2. 若多个节点被联系，则来自各replica的row会在内存中作比较，若不一致，则协调者使用含最新数据的replica向client返回结果。
+		3. 协调者在后台联系和比较来自其余拥有对应row的replica的数据，若不一致，会向过时的replica发写请求用最新的数据进行更新:read repair。
+	3. 数据一致性
+		1. 协调者进行比较操作
+		2. 比较操作只需要两个副本的是时间戳
+		3. 会用md5判断值是否相同
+		4. 在确定哪个是最新的后，那个副本才把查询结果传送给协调者，之前的时候不传查询结果
+		5. 协调者将结果传送给客户端
+	 
 
 ### Misc
 1. 如何区分是不是distributed database?
 	* 不以防止单点失败为目的的多数据库
+	
+### Read
+* ![](http://img.blog.csdn.net/20150830142808484)
 
 ### Write
-1. Cassandra拥有非常高的写性能
-2. 存储结构类似LSM树，存储引擎以追加的方式顺序写入磁盘连续存储数据，写入是可以并发写入的，不像B+树需要加锁，写入速度很快。levelDB和Hbase都是类似的存储结构。
-2. 过程：
+* Cassandra拥有非常高的写性能
+* 存储结构类似LSM树，存储引擎以追加的方式顺序写入磁盘连续存储数据，写入是可以并发写入的，不像B+树需要加锁，写入速度很快。levelDB和Hbase都是类似的存储结构。
+* ![](http://img.blog.csdn.net/20150830130032129)
+* 流程
+	1. 首先由Commit Log捕获写事件并持久化，保证数据的可靠性。之后数据也会被写入到内存中，叫Memtable
+		* Commit Log记录每次写请求的完整信息，此时并不会根据主键进行排序，而是顺序写入，这样进行磁盘操作时没有随机写导致的磁盘大量寻道操作，对于提升速度有极大的帮助
+		* Commit Log会在Memtable中的数据刷入SSTable后被清除掉，因此它不会占用太多磁盘空间
+		* 写入到Memtable时，Cassandra能够动态地为它分配内存空间，你也可以使用工具自己调整。
+	2. memtable满了之后会将数据刷入数据文件SSTable，并清空commit log. 
+		* 当达到阀值后，Memtable中的数据和索引会被放到一个队列中，然后flush到磁盘，可以使用memtableflushqueue_size参数来指定队列的长度。当进行flush时，会停止写请求。
+	3. 根据consistency level, 刷入SSTable后回应协调者. 
+	4. 每个table包含多个SSTable和Memtable
+		* 为什么要分成多个？减小表的大小来提高sequential scan的效率
+		* 难道不用检查多个sstable么？ bloom filter极大地提高效率
 	
