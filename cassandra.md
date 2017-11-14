@@ -1,9 +1,34 @@
 
 ## Cassandra
+
+### References
+* [Cassandra架构理解](http://zqhxuyuan.github.io/2015/08/25/2015-08-25-Cassandra-Architecture/)
+* [一致性哈希算法详解](http://blog.csdn.net/cywosp/article/details/23397179/)
 ### Distributed Hashtable (DHT)
 
-### Centralized Database vs Non-Centralized Database
+### 架构与通信
+1. **Non-Centralized Database**
+	* 不同于以往的主从分布式的中心化结构, 采用环形结构结构，无单点，无中心的p2p结构. 
+	* Cassandra集群中的节点**没有主次之分**, 数据分布于集群中各节点，各节点**每秒通过gossip协议**通信
 
+2. **节点间通信**
+	* 通信协议为gossip, 通过gossip在集群中的节点间交换位置和状态信息, 通过Gossip协议，它们可以知道集群中有哪些节点，以及这些节点的状态如何
+	* gossip每秒钟运行一次，与至多3个其他节点交换信息，这样所有节点可以迅速了解到集群中其他节点的信息
+	* 每一条Gossip消息上都有一个版本号，节点可以对接收到的消息进行版本比对，从而得知哪些消息是我需要更新的，哪些消息是我有而别人没有的，然后互相倾诉吐槽，确保二者得到的信息相同.
+	* Cassandra启动时，会启动Gossip服务，Gossip服务启动后会启动一个任务GossipTask，这个任务会周期性地与其他节点进行通信。GossipTask是位于org.apache.cassandra.gms.Gossip类下的一个内部类
+
+3. **失败检测与恢复**
+	* 通过gossip来检测其他节点是否正常以避免将请求路由至不可达或者性能差的节点
+	* 对于失败节点，其他节点会通过gossip定期与之联系来查看是否恢复
+	* 一旦某节点被标记为失败，其错过的写操作会有其他replicas存储一段时间. (需开启hinted handoff，若节点失败的时间超过了max_hint_window_in_ms，错过的写不再被存储). Down掉的节点经过一段时间恢复后需执行repair操作，一般在所有节点运行nodetool repair以确保数据一致。
+	
+### DHT（一致性哈希）
+1. **解决问题**
+	* 动态增删节点导致重新计算哈希，导致数据迁移量太大
+2. **结构**
+	* 环状结构，环可视作hash空间，也就是hash的值空间，范围为0 - 2^32
+3. **原理**
+	1. 
 
 ### MIsc
 1. 如何区分是不是distributed database?
