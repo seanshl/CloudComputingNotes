@@ -12,7 +12,11 @@
 	2. Reduce 程序员必须定义reduce函数
 * **过程图**
 	* ![](https://cdn.guru99.com/images/Big_Data/061114_0930_Introductio1.png)
+	* ![](https://i.stack.imgur.com/EH8tY.jpg)
 * **phases**
 	1. input splits
-
+		* 将作为input的任务按照某种方式划分成M块，例如将文件分成M个数据片段
+		* 每个数据片段大小从16M到64M不等
+		* 用户在集群中创建大量
+		
  
